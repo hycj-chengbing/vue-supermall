@@ -11,7 +11,7 @@ export function request(config) {
     //拦截后需要将拦截下来的请求数据返回发送
     return config;
   }, err => {
-
+    console.log(err)
   })
 
   // 响应拦截器

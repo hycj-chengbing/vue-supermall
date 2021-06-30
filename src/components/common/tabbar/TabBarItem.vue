@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* item均等分 */
 .tab-bar-item {
   flex: 1;
