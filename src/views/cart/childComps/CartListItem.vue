@@ -2,21 +2,22 @@
   <div id="shop-item">
     <div class="item-selector">
       <CheckButton
+        id="checkButton"
         @click.native="checkedChange"
         :is-checked="itemInfo.checked"
       ></CheckButton>
     </div>
-    <div class="item-img">
-      <img :src="itemInfo.image" alt="商品图片" />
-    </div>
-    <div class="item-info">
-      <div class="item-title">{{ itemInfo.title }}</div>
-      <div class="item-desc">{{ itemInfo.desc }}</div>
-      <div class="info-bottom">
-        <div class="item-price left">￥{{ itemInfo.price }}</div>
-        <div class="item-count right">×{{ itemInfo.count }}</div>
+      <div class="item-img">
+        <img :src="itemInfo.image" alt="商品图片" />
       </div>
-    </div>
+      <div class="item-info">
+        <div class="item-title">{{ itemInfo.title }}</div>
+        <div class="item-desc">{{ itemInfo.desc }}</div>
+        <div class="info-bottom">
+          <div class="item-price left">￥{{ itemInfo.price }}</div>
+          <div class="item-count right">x{{ itemInfo.count }}</div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -36,7 +37,7 @@ export default {
     CheckButton,
   },
   methods: {
-    checkedChange () {
+    checkedChange() {
       this.itemInfo.checked = !this.itemInfo.checked;
     },
   },
@@ -57,7 +58,8 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.item-title ,.item-desc {
+.item-title,
+.item-desc {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

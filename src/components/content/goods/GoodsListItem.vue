@@ -22,7 +22,9 @@ export default {
   },
   computed: {
     showImage() {
-      return this.goodsItem.image || this.goodsItem.show.img;
+      return (
+        this.goodsItem.image || this.goodsItem.img || this.goodsItem.show.img
+      );
     },
   },
   methods: {
@@ -30,13 +32,14 @@ export default {
       this.$bus.$emit("itemImageLoad"); //事件总线发射自定义事件
     },
     itemClick() {
-      this.$router.push("/detail/" + this.goodsItem.iid);
+      let id = this.goodsItem.iid
+      this.$router.push("/app/detail/" + id);
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .goods-item {
   padding-bottom: 40px;
   position: relative;

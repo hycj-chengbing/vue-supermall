@@ -5,7 +5,7 @@
       :titles="['流行', '新款', '精选']"
       @tabClick="tabClick"
       ref="tabControl1"
-      class="tabcontrol"
+      class="tab-control"
       v-show="isTabFixed"
     ></tab-control>
     <scroll
@@ -46,6 +46,7 @@ import FeatureView from "./childComps/FeatureView.vue";
 
 import { getHomeMultidata, getHomeGoods } from "network/home"; //没有default 导出要加{}
 import { itemListenerMixin, backTopMixin } from "common/mixin.js";
+
 export default {
   name: "Home",
   components: {
@@ -77,18 +78,23 @@ export default {
     showGoods() {
       return this.goods[this.currentType].list;
     },
-    activated() {
-      this.$refs.scroll.refresh();
-      this.$refs.scroll.scrollTo(0, this.saveY, 0);
-      console.log('lakscn');
-    },
-    deactivated() {
-      // 1.保存Y值
-      this.saveY = this.$refs.scroll.getScrollY();
-      //取消全局事件的监听
-      this.$bus.$off("itemImgLoad", this.itemImageLister);
-      console.log('lakscn');
-    },
+  },
+  // destroyed() {
+  //   console.log("被销毁了");
+  // },
+  activated() {
+    //活跃
+    this.$refs.scroll.refresh();
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+
+  deactivated() {
+    //销毁
+    // 1.保存Y值
+    this.saveY = this.$refs.scroll.getScrollY();
+    // console.log(this.saveY);
+    //2.取消全局事件的监听
+    this.$bus.$off("itemImageLoad", this.itemImageLister);
   },
   created() {
     //1.请求多个数据
@@ -98,10 +104,16 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
+  // mounted() {
+  // 用混入代替
+  //   const refresh = debounce(this.$refs.scroll.refresh, 200);
+  //   //监听itme图片加载完成
+  //   this.$bus.$on("itemImageLoad", () => {
+  //     refresh();
+  //   });
+  // },
   methods: {
-    /**
-     * 事件监听相关方法
-     */
+    // 事件监听相关方法
     tabClick(index) {
       switch (index) {
         case 0:
@@ -117,12 +129,15 @@ export default {
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },
+    //回到顶部（用混入代替）
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0, 0, 500);
+    // },
     contentScroll(position) {
       // 1.判断BackScroll是否显示
       // console.log(position);
-      this.isShowBackTop = -position.y > 1000;
       this.listenShowBackTop(position);
-      // 2.
+      // 2.固定位置
       this.isTabFixed = -position.y > this.tabOffsetTop;
     },
     loadMore() {
@@ -130,23 +145,26 @@ export default {
       this.getHomeGoods(this.currentType);
     },
     swiperImageLoad() {
+      // 组件没有offsetTop属性，但是可以通过$el获取offsetTop(距离顶部的距离)
       this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+      // console.log(this.tabOffsetTop);
     },
     /**
      * 网络请求相关的方法
      */
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
-        // console.log(res);
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       });
     },
     getHomeGoods(type) {
-      const page = this.goods[type].page + 1; //type为变量，获取对象属性时变量是用[]
-      getHomeGoods(type, 1).then((res) => {
+      const page = this.goods[type].page + 1; //type为变量,获取对象属性时变量是用[]
+      getHomeGoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        //通过ref拿到 scroll 的 finishPullUp()方法
+        // 默认只能上拉加载一次，必须调用这个函数 完成继续上拉加载更多
         this.$refs.scroll.finishPullUp();
       });
     },
@@ -163,7 +181,7 @@ export default {
 .home-nav {
   background-color: var(--color-tint);
   color: #fff;
-
+  /*浏览器原生混动使用 betterscroll 就不需要 */
   /* position: fixed;
   left: 0px;
   right: 0px;

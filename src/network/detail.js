@@ -1,17 +1,14 @@
-import { request } from "./request"
-export function getDetail(iid) {
-    return request({
-        url: '/detail',
+import  request from "./request"
+export function getDetail(param) {
+    return request.get('/detail',{
         params: {
-            iid
+          iid:param
         }
     })
 }
 
 export function getRecommend(){
-    return request({
-        url:'/recommend'
-    })
+    return request.get('/recommend')
 }
 
 // ES6的类,详情数据

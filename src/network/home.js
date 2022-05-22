@@ -1,12 +1,12 @@
-import { request } from "./request";//没有default 导出要加{}
+import request from "./request";//没有default 导出要加{}
+
 export function getHomeMultidata() {
-    return request({
-        url: '/home/multidata'
-    })
+    return request.get('/home/multidata')
 }
+
+
 export function getHomeGoods(type, page) {
-    return request({
-        url: '/home/data',
+    return request.get('/home/data', {
         params: {
             type,
             page

@@ -2,7 +2,7 @@
   <div class="tab-bar-item" @click="itemClick">
     <slot v-if="!isActive" name="item-icon"></slot>
     <slot v-else name="item-icon-active"></slot>
-    <div :style="isStyleActive">
+    <div :style="activeStyle">
       <slot name="item-text"></slot>
     </div>
   </div>
@@ -27,18 +27,19 @@ export default {
   },
   computed: {
     isActive() {
-      //看着像函数，其实是属性
+      //看着像函数
       return this.$route.path.indexOf(this.path) !== -1;
       //   那个活跃，$route就是哪个
+
       // indexOf 表示如果从$route.path里面找到了this.path 就返回1，否则返回-1
     },
     activeStyle() {
-      return this.isActive ? { color: this.isactiveStyle} : {};
+      return this.isActive ? { color: this.isStyleActive} : {};
     },
   },
   methods: {
     itemClick() {
-      this.$router.replace(this.path);
+      this.$router.replace("/app"+this.path);
     },
   },
 };

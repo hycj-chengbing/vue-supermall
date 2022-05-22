@@ -1,26 +1,36 @@
-import axios from 'axios'
+/*
+封装一个发送Ajax请求的实例
+封装axios库
+函数返回值是promise对象
+*/
+import axios from 'axios';
+import { BASE_URL, TIMEOUT,HEADERS} from "./config";
 
-export function request(config) {
-  const instance = new axios.create({
-    baseURL:'http://152.136.185.210:7878/api/m5',
-    timeout:5000
-  });
+const instance = axios.create({
+  baseURL: BASE_URL,
+  headers: HEADERS,
+  timeout: TIMEOUT
+});
+// 添加请求拦截器
+instance.interceptors.request.use(config => {
+  // 1.发送网络请求时, 在界面的中间位置显示Loading的组件
 
-  // 请求拦截器
-  instance.interceptors.request.use(config => {
-    //拦截后需要将拦截下来的请求数据返回发送
-    return config;
-  }, err => {
-    console.log(err)
-  })
+  // 2.某一些请求要求用户必须携带token, 如果没有携带, 那么直接跳转到登录页面
 
-  // 响应拦截器
-  instance.interceptors.response.use(res => {
-    // 拦截后需要将拦截下来处理成的结果返回
-    return res.data
-  }, err => {
-    console.log(err)
-  })
+  // 3.params/data序列化的操作
 
-  return instance(config)
+  return config;
+}, err => {
+  console.log(err.message);
+});
+// 添加响应拦截器
+instance.interceptors.response.use(res => {
+  // console.log(res);
+  return res.data
+}, err => {
+  console.log('请求出错了:' + err.message);
 }
+);
+
+export default instance;
+

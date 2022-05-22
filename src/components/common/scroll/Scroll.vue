@@ -29,6 +29,8 @@ export default {
     // 1.  创建BSscroll对象
     this.scroll = new BScroll(this.$refs.wrapper, {
       click: true,
+      observeDOM: true,
+      observerImage: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
     });

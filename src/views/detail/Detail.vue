@@ -20,7 +20,7 @@
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info
         :detailInfo="detailInfo"
-        @imageLoad="imageLoad"
+        @imageLoad="detailImageLoad"
       ></detail-goods-info>
       <detail-param-info
         ref="params"
@@ -52,7 +52,8 @@ import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll.vue";
 import { itemListenerMixin, backTopMixin } from "common/mixin.js";
 import { mapActions } from "vuex";
-
+//功能组件
+import { debounce } from "common/utils"; ////防抖函数
 import {
   getDetail,
   Goods,
@@ -87,6 +88,7 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [],
+      getThemeYopY: null,
       currentIndex: 0,
     };
   },
@@ -113,7 +115,7 @@ export default {
       // 5.获取参数信息
       this.paramInfo = new GoodsParams(
         data.itemParams.info,
-        data.itemParams.rule
+        data.itemParams.rule || ''
       );
       // 7.取出评论信息
       if (data.rate.cRate !== 0) {
@@ -125,21 +127,23 @@ export default {
       // console.log(res);
       this.recommends = res.data.list;
     });
-  },
-  destroyed() {
-    this.$bus.$off("itemImageLoag", this.itemImageListener);
-  },
-  methods: {
-    ...mapActions(["addCart"]),
-    imageLoad() {
-      this.$refs.scroll.refresh();
-
+    this.getThemeTopY = debounce(() => {
       this.themeTopYs = [];
       this.themeTopYs.push(0);
+      // 组件对象没有 offsetTop 必须通过$el拿他里面根元素的offsetTop(相对父元素的顶部位置)
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-      // console.log(this.themeTopYs);
+    }, 10);
+  },
+  destroyed() {
+    this.$bus.$off("itemImageLoad", this.itemImageListener);
+  },
+  methods: {
+    ...mapActions(["addCart"]),
+    detailImageLoad() {
+      this.$refs.scroll.refresh();
+      this.getThemeTopY();
     },
     titleClick(index) {
       // console.log(index);
@@ -163,7 +167,7 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
-      // 1.判断BackScroll是否显示
+      // 3.判断BackScroll是否显示
       this.listenShowBackTop(position);
     },
     addToCart() {
@@ -175,7 +179,7 @@ export default {
       product.price = this.goods.realPrice;
       product.iid = this.iid;
 
-      // 2.将商品添加购物车
+      // 2.将商品添加购物车( 用...mapActions(["addCart"])代替了)
       // this.$store.dispatch("addCart", product).then(res=>{
       //   console.log(res);
       // })
@@ -187,7 +191,7 @@ export default {
         //   this.show=
         //   this.message=''
         // }, 2000);
-        this.$toast.show(res,2000)
+        this.$toast.show(res, 2000);
       });
     },
   },

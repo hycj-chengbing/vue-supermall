@@ -24,6 +24,7 @@ export default {
     ...mapGetters(["cartList"]),
   },
   activated() {
+    // 进来刷新
       this.$refs.scroll.refresh()
   },
 };

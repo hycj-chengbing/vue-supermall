@@ -14,6 +14,7 @@ export function debounce(fn, delay) {
 
 // 时间格式化
 export function formatDate(date, fmt) {
+  // 获取年份
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
   }
